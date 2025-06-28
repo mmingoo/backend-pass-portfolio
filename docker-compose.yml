@@ -21,13 +21,14 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s  # 컨테이너 시작 후 30초 동안은 실패를 무시
-    deploy:
+    deploy: # 해당 컨테이너의 어느정도 리소스를 사용할 것인지
       resources:
         limits:
           cpus: "2"  # 최대 2개의 코어 할당
           memory: 2GB   # 최대 2GB 메모리 할당
 
   app:
+    # docker-compose.yml의 존재하는 위치 내의 도커 파일을 기반으로 도커 이미지를 만들겠다
     build: .
     container_name: spring-app
     ports:
@@ -35,7 +36,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/portfolio?allowPublicKeyRetrieval=true&useSSL=false&rewriteBatchedStatements=true
       JAVA_OPTS: "-Xms256m -Xmx512m"  # JVM 힙 메모리 제한
-    deploy:
+    deploy: # 리소스 제한
       resources:
         limits:
           cpus: '2'    # CPU 2코어로 제한
@@ -51,6 +52,7 @@ services:
     networks:
       - monitoring
 
+  # 데이터 수집 컨테이너
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -66,6 +68,7 @@ services:
           cpus: '0.5'
           memory: 512M
 
+  # 수집한 데이터를 시각화
   grafana:
     image: grafana/grafana
     container_name: grafana

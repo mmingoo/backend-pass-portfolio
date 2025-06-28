@@ -276,7 +276,7 @@ resource "aws_instance" "app" {
 # 탄력적 IP
 resource "aws_eip" "app" {
   instance = aws_instance.app.id
-  vpc      = true
+  domain      = "vpc"
 
   tags = {
     Name = "portfolio-app-eip"
